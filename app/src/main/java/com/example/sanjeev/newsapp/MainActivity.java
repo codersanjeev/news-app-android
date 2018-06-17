@@ -67,6 +67,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<List<NewsItem>> loader, List<NewsItem> data) {
         mNewsItems = new ArrayList<>(data);
+        if(mNewsItems.isEmpty()){
+            // No news fetched
+            // Display Message to user
+            // possible reasons are server is down
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("No News updates available, please reload the app or check after some time..")
+                    .setTitle("Unknown Error");
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
         UpdateView(mNewsItems);
     }
 
