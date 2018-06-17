@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+// WebView Activity to display the details of a news on which user clicked
 public class NewsDetailView extends AppCompatActivity {
 
     WebView webView;
@@ -26,9 +26,6 @@ public class NewsDetailView extends AppCompatActivity {
                 return false;
             }
         });
-
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
 
         Intent in = getIntent();
         String mURL = in.getStringExtra("URL");

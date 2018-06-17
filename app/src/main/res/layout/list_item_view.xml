@@ -24,6 +24,15 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/bottontext_height"
             android:layout_below="@id/title_view"
+            android:layout_gravity="bottom|center_horizontal"
+            android:gravity="center"
+            android:padding="@dimen/margin8" />
+
+        <TextView
+            android:id="@+id/author_name_view"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/bottontext_height"
+            android:layout_below="@id/title_view"
             android:layout_gravity="bottom"
             android:gravity="center"
             android:padding="@dimen/margin8" />

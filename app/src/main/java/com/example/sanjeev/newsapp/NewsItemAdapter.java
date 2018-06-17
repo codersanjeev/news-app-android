@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 // Custom ArrayAdapter for each NewsItem
 public class NewsItemAdapter extends ArrayAdapter<NewsItem> {
@@ -31,10 +30,12 @@ public class NewsItemAdapter extends ArrayAdapter<NewsItem> {
         TextView sectionView = listItemView.findViewById(R.id.section_view);
         TextView titleView = listItemView.findViewById(R.id.title_view);
         TextView dateView = listItemView.findViewById(R.id.date_view);
+        TextView authorView = listItemView.findViewById(R.id.author_name_view);
 
         sectionView.setText(newsItem != null ? newsItem.getmSection() : null);
         titleView.setText(newsItem != null ? newsItem.getmNewsTitle() : null);
         dateView.setText(newsItem != null ? newsItem.getmDate() : null);
+        authorView.setText(newsItem != null ? newsItem.getmAuthorName() : null);
 
         return listItemView;
     }

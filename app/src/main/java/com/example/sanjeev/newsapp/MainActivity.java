@@ -1,5 +1,6 @@
 package com.example.sanjeev.newsapp;
 
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
@@ -31,18 +32,32 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // create an empty list of news items
         mNewsItems = new ArrayList<>();
         // start a new thread in background to fetch data
-        LoaderManager loaderManager = getLoaderManager();
-        loaderManager.initLoader(1, null, this);
-        // To display details of a news
-        // implement onclick for each item in list
-        listView.setOnItemClickListener(this);
+        if(!isConnected()){
+            // Device is not connected
+            // Display the error information
+            //Toast.makeText(this, "Not Connected", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Device Not Connected to Internet")
+                    .setTitle("Network Error");
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        else{
+            // else start to fetch the data in background
+            LoaderManager loaderManager = getLoaderManager();
+            loaderManager.initLoader(1, null, this);
+            // To display details of a news
+            // implement onclick for each item in list
+            listView.setOnItemClickListener(this);
+
+        }
     }
 
     // On creation of loader
     // create a http request on guardian server
     @Override
     public Loader<List<NewsItem>> onCreateLoader(int id, Bundle args) {
-        String mURL = "https://content.guardianapis.com/search?api-key=dcd9ad5e-c852-4c47-bc8f-eab7f3411f07";
+        String mURL = "https://content.guardianapis.com/search?&show-tags=contributor&api-key=dcd9ad5e-c852-4c47-bc8f-eab7f3411f07";
         Uri baseUri = Uri.parse(mURL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
         return new NewsLoader(this, uriBuilder.toString());
@@ -72,5 +87,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Intent in = new Intent(getApplicationContext(), NewsDetailView.class);
         in.putExtra("URL", mNewsItems.get(position).getmUrl());
         startActivity(in);
+    }
+
+    // Checks if device is connected to internet
+    private boolean isConnected(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }

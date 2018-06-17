@@ -20,6 +20,10 @@ import java.util.List;
 // Utility class to facilitate implementation of fetching and parsing of news
 public final class Utility {
 
+    private static final int RESPONSE_CODE_OK = 200;
+    private static final int CONNECTION_TIMEOUT = 15000;
+    private static final int READ_TIMEOUT = 10000;
+
     private Utility() {
     }
 
@@ -60,11 +64,11 @@ public final class Utility {
         InputStream inputStream = null;
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setReadTimeout(10000 /* milliseconds */);
-            urlConnection.setConnectTimeout(15000 /* milliseconds */);
+            urlConnection.setReadTimeout(READ_TIMEOUT /* milliseconds */);
+            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT /* milliseconds */);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
-            if (urlConnection.getResponseCode() == 200) {
+            if (urlConnection.getResponseCode() == RESPONSE_CODE_OK) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
             } else {
@@ -100,7 +104,7 @@ public final class Utility {
 
     // Extract list of news items from fetched String response
     private static List<NewsItem> parseJSON(String response) throws JSONException {
-        String section, pubDate, title, url;
+        String section, pubDate, title, url, author;
         List<NewsItem> newsItems = new ArrayList<>();
         JSONObject root = new JSONObject(response);
         JSONObject res = root.getJSONObject("response");
@@ -111,7 +115,10 @@ public final class Utility {
             pubDate = result.getString("webPublicationDate");
             title = result.getString("webTitle");
             url = result.getString("webUrl");
-            newsItems.add(new NewsItem(title, pubDate, section, url));
+            JSONArray tagsArray = result.getJSONArray("tags");
+            JSONObject firstTag = tagsArray.getJSONObject(0);
+            author = firstTag.getString("webTitle");
+            newsItems.add(new NewsItem(title, pubDate, section, url, author));
         }
         return newsItems;
     }

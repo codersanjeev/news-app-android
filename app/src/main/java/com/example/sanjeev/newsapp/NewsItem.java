@@ -14,27 +14,34 @@ public class NewsItem {
     private String mDate;
     private String mSection;
     private String mUrl;
+    private String mAuthorName;
 
-    public String getmNewsTitle() {
+
+    public String getmAuthorName() {
+        return mAuthorName;
+    }
+
+    String getmNewsTitle() {
         return mNewsTitle;
     }
 
-    public String getmDate() {
+    String getmDate() {
         return mDate;
     }
 
-    public String getmSection() {
+    String getmSection() {
         return mSection;
     }
 
-    public String getmUrl() {
+    String getmUrl() {
         return mUrl;
     }
 
-    NewsItem(String newsItem, String date, String section, String url) {
+    NewsItem(String newsItem, String date, String section, String url, String authorName) {
         this.mNewsTitle = newsItem;
         this.mDate = date;
         this.mSection = section;
         this.mUrl = url;
+        this.mAuthorName = authorName;
     }
 }
