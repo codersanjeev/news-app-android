@@ -26,23 +26,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ArrayList<NewsItem> mNewsItems;
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id == R.id.settings){
-            Intent in = new Intent(this, SettingsActivity.class);
-            startActivity(in);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -76,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // create a http request on guardian server
     @Override
     public Loader<List<NewsItem>> onCreateLoader(int id, Bundle args) {
-        String mURL = "https://content.guardianapis.com/search?&show-tags=contributor&api-key=dcd9ad5e-c852-4c47-bc8f-eab7f3411f07";
-        Uri baseUri = Uri.parse(mURL);
+
+        Uri baseUri = Uri.parse(Utility.getmURL());
         Uri.Builder uriBuilder = baseUri.buildUpon();
         return new NewsLoader(this, uriBuilder.toString());
     }
@@ -116,6 +99,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Intent in = new Intent(getApplicationContext(), NewsDetailView.class);
         in.putExtra("URL", mNewsItems.get(position).getmUrl());
         startActivity(in);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.settings){
+            Intent in = new Intent(this, SettingsActivity.class);
+            startActivity(in);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // Checks if device is connected to internet
