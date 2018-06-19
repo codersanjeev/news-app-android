@@ -5,10 +5,12 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,16 +26,38 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ListView listView;
     private NewsItemAdapter adapter;
     private ArrayList<NewsItem> mNewsItems;
+    private final String BASE_URL = "https://content.guardianapis.com/search?&show-tags=contributor&api-key=";
+    private final String API_KEY = "dcd9ad5e-c852-4c47-bc8f-eab7f3411f07";
+    private final String ORDER_BY_ATTR = "&order-by=oldest";
+
+    @Override
+    protected void onResume() {
+        fetchSavedPreferences();
+        super.onResume();
+    }
+
+    // get saved preference and build the string url accordingly.
+    private void fetchSavedPreferences() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(preferences.getString("order_by", "Newest").equals("Newest")){
+            Utility.setmURL(BASE_URL + API_KEY);
+        }
+        else{
+            Utility.setmURL(BASE_URL + API_KEY + ORDER_BY_ATTR);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        fetchSavedPreferences();
+
         listView = findViewById(R.id.list_view);
         // create an empty list of news items
         mNewsItems = new ArrayList<>();
-        // start a new thread in background to fetch data
+
         if(!isConnected()){
             // Device is not connected
             // Display the error information
@@ -100,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         in.putExtra("URL", mNewsItems.get(position).getmUrl());
         startActivity(in);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

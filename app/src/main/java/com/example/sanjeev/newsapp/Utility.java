@@ -23,7 +23,7 @@ public final class Utility {
     private static final int RESPONSE_CODE_OK = 200;
     private static final int CONNECTION_TIMEOUT = 15000;
     private static final int READ_TIMEOUT = 10000;
-    private static String mURL = "https://content.guardianapis.com/search?&show-tags=contributor&api-key=dcd9ad5e-c852-4c47-bc8f-eab7f3411f07";
+    private static String mURL;
 
     public static String getmURL() {
         return mURL;
@@ -124,16 +124,18 @@ public final class Utility {
             pubDate = result.getString("webPublicationDate");
             title = result.getString("webTitle");
             url = result.getString("webUrl");
-            JSONArray tagsArray = result.getJSONArray("tags");
-
             try{
+                JSONArray tagsArray = result.getJSONArray("tags");
                 JSONObject firstTag = tagsArray.getJSONObject(0);
                 author = firstTag.getString("webTitle");
             }
             catch(Exception e){
-                // When author name is not availaible in JSON Response.
-                author = "Not Availaible";
+                // When author name is not available in JSON Response.
+                author = "Not Available";
             }
+
+            // Remove extra characters from date
+            pubDate = pubDate.replaceAll("[a-zA-Z]", " ");
 
             newsItems.add(new NewsItem(title, pubDate, section, url, author));
         }
