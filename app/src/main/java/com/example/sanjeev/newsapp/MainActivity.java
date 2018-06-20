@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if(!isConnected()){
             // Device is not connected
             // Display the error information
-            //Toast.makeText(this, "Not Connected", Toast.LENGTH_SHORT).show();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Device Not Connected to Internet")
                     .setTitle("Network Error");
