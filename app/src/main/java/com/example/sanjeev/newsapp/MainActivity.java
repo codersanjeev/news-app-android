@@ -38,12 +38,32 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     // get saved preference and build the string url accordingly.
     private void fetchSavedPreferences() {
+        String url;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(preferences.getString("order_by", "Newest").equals("Newest")){
-            Utility.setmURL(BASE_URL + API_KEY);
+        if(preferences.getString(getString(R.string.key), getString(R.string.default_order_value)).equals(getString(R.string.default_order_value))){
+            url = BASE_URL + API_KEY;
         }
         else{
-            Utility.setmURL(BASE_URL + API_KEY + ORDER_BY_ATTR);
+            url = BASE_URL + API_KEY + ORDER_BY_ATTR;
+        }
+        switch(preferences.getString(getString(R.string.category_key), "")){
+            case "All" :
+                Utility.setmURL(url);
+                break;
+            case "Politics" :
+                Utility.setmURL(url + "&q=politics");
+                break;
+            case "Sports" :
+                Utility.setmURL(url + "&q=sports");
+                break;
+            case "Finance" :
+                Utility.setmURL(url + "&q=finance");
+                break;
+            case "Education" :
+                Utility.setmURL(url + "&q=education");
+                break;
+            case "Economics" :
+                Utility.setmURL(url + "&q=economics");
         }
     }
 
@@ -62,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             // Device is not connected
             // Display the error information
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Device Not Connected to Internet")
-                    .setTitle("Network Error");
+            builder.setMessage(R.string.network_error_message)
+                    .setTitle(R.string.network_error_title);
             AlertDialog dialog = builder.create();
             dialog.show();
         }
@@ -97,8 +117,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             // Display Message to user
             // possible reasons are server is down
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("No News updates available, please reload the app or check after some time..")
-                    .setTitle("Unknown Error");
+            builder.setMessage(R.string.json_error)
+                    .setTitle(R.string.json_error_title);
             AlertDialog dialog = builder.create();
             dialog.show();
         }
@@ -135,6 +155,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         int id = item.getItemId();
         if(id == R.id.settings){
             Intent in = new Intent(this, SettingsActivity.class);
+            startActivity(in);
+            return true;
+        }
+        else if(id == R.id.choose_topic)
+        {
+            Intent in = new Intent(this, ChooseCategory.class);
             startActivity(in);
             return true;
         }

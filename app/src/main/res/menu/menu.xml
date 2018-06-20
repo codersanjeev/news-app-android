@@ -3,5 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.sanjeev.newsapp.MainActivity">
     <item android:id="@+id/settings"
-        android:title="@string/settings_title"/>
+        android:title="@string/orderby"/>
+    <item android:id="@+id/choose_topic"
+        android:title="@string/topic_title"/>
 </menu>
