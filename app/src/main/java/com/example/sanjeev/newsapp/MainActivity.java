@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         else{
             url = BASE_URL + API_KEY + ORDER_BY_ATTR;
         }
-        switch(preferences.getString(getString(R.string.category_key), "")){
+        Log.v("switch_value", preferences.getString("category_list", ""));
+        switch(preferences.getString("category_list", "")){
             case "All" :
                 Utility.setmURL(url);
                 break;
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 break;
             case "Economics" :
                 Utility.setmURL(url + "&q=economics");
+            default:
+                Utility.setmURL(url);
         }
     }
 
@@ -102,6 +106,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     // create a http request on guardian server
     @Override
     public Loader<List<NewsItem>> onCreateLoader(int id, Bundle args) {
+
+        Log.v("URL Received", Utility.getmURL());
 
         Uri baseUri = Uri.parse(Utility.getmURL());
         Uri.Builder uriBuilder = baseUri.buildUpon();
