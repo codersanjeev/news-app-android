@@ -16,7 +16,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '27.0.3'
     dexOptions {
         incremental true
     }
