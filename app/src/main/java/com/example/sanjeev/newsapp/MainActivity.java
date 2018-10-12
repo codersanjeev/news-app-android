@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -122,6 +123,17 @@ public class MainActivity extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+        int nightMode = AppCompatDelegate.getDefaultNightMode();
+        if(nightMode == AppCompatDelegate.MODE_NIGHT_YES){
+            // night mode turned on
+            // set the title accordingly
+            menu.findItem(R.id.night_mode).setTitle("Day Mode");
+        }
+        else{
+            // day mode turned on
+            // set the title accordingly
+            menu.findItem(R.id.night_mode).setTitle("Night Mode");
+        }
         return true;
     }
 
@@ -131,15 +143,22 @@ public class MainActivity extends AppCompatActivity{
         if(id == R.id.settings){
             Intent in = new Intent(this, SettingsActivity.class);
             startActivity(in);
-            return true;
         }
-        else if(id == R.id.choose_topic)
-        {
+        else if(id == R.id.choose_topic) {
             Intent in = new Intent(this, ChooseCategory.class);
             startActivity(in);
-            return true;
         }
-        return super.onOptionsItemSelected(item);
+        else if(id == R.id.night_mode){
+            int nightMode = AppCompatDelegate.getDefaultNightMode();
+            if(nightMode == AppCompatDelegate.MODE_NIGHT_YES){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            }
+            else{
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+            recreate();
+        }
+        return true;
     }
 
     // Checks if device is connected to internet

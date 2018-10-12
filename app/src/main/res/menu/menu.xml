@@ -6,8 +6,6 @@
         android:title="@string/orderby"/>
     <item android:id="@+id/choose_topic"
         android:title="@string/topic_title"/>
-    <item android:title="Day Mode"
-        android:id="@+id/day_mode"/>
     <item android:title="Night Mode"
         android:id="@+id/night_mode"/>
 </menu>
