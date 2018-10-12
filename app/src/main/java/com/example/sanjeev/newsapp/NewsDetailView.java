@@ -7,17 +7,20 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 // WebView Activity to display the details of a news on which user clicked
 public class NewsDetailView extends AppCompatActivity {
 
-    WebView webView;
+    @BindView(R.id.webView) WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-        webView = findViewById(R.id.webView);
+        ButterKnife.bind(this);
 
         webView.setWebViewClient(new WebViewClient() {
             @Override

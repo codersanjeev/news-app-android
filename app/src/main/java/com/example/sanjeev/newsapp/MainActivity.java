@@ -9,9 +9,13 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,17 +23,61 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<NewsItem>>, AdapterView.OnItemClickListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    private ListView listView;
-    private NewsItemAdapter adapter;
-    private ArrayList<NewsItem> mNewsItems;
+public class MainActivity extends AppCompatActivity{
+
+    private static ArrayList<NewsItem> newsItems = new ArrayList<>();
+    private NewsItemAdapter mAdapter;
     private final String BASE_URL = "https://content.guardianapis.com/search?&show-tags=contributor&api-key=";
     private final String API_KEY = "dcd9ad5e-c852-4c47-bc8f-eab7f3411f07";
     private final String ORDER_BY_ATTR = "&order-by=oldest";
+
+    @BindView(R.id.recycler_view)
+    RecyclerView mRecyclerView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        ButterKnife.bind(this);
+
+        fetchSavedPreferences();
+
+        if(!isConnected()){
+            // Device is not connected
+            // Display the error information
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.network_error_message)
+                    .setTitle(R.string.network_error_title);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        else{
+
+            // will replace it soon with background thread
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+
+            try {
+                newsItems = Utility.fetchNewsItems(Utility.getmURL());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        mAdapter = new NewsItemAdapter(this, newsItems);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
 
     @Override
     protected void onResume() {
@@ -69,85 +117,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             default:
                 Utility.setmURL(url);
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        fetchSavedPreferences();
-
-        listView = findViewById(R.id.list_view);
-        // create an empty list of news items
-        mNewsItems = new ArrayList<>();
-
-        if(!isConnected()){
-            // Device is not connected
-            // Display the error information
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.network_error_message)
-                    .setTitle(R.string.network_error_title);
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
-        else{
-            // else start to fetch the data in background
-            LoaderManager loaderManager = getLoaderManager();
-            loaderManager.initLoader(1, null, this);
-            // To display details of a news
-            // implement onclick for each item in list
-            listView.setOnItemClickListener(this);
-
-        }
-    }
-
-    // On creation of loader
-    // create a http request on guardian server
-    @Override
-    public Loader<List<NewsItem>> onCreateLoader(int id, Bundle args) {
-
-        Log.v("URL Received", Utility.getmURL());
-
-        Uri baseUri = Uri.parse(Utility.getmURL());
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        return new NewsLoader(this, uriBuilder.toString());
-    }
-
-    // on receiving the response, Update the UI
-    @Override
-    public void onLoadFinished(Loader<List<NewsItem>> loader, List<NewsItem> data) {
-        mNewsItems = new ArrayList<>(data);
-        if(mNewsItems.isEmpty()){
-            // No news fetched
-            // Display Message to user
-            // possible reasons are server is down
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.json_error)
-                    .setTitle(R.string.json_error_title);
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
-        UpdateView(mNewsItems);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<NewsItem>> loader) {
-        adapter.clear();
-    }
-
-    private void UpdateView(ArrayList<NewsItem> newsItems) {
-        adapter = new NewsItemAdapter(getApplicationContext(), newsItems);
-        listView.setAdapter(adapter);
-    }
-
-    // On click over any item in list
-    // a webview will be opened with url specific to that item
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent in = new Intent(getApplicationContext(), NewsDetailView.class);
-        in.putExtra("URL", mNewsItems.get(position).getmUrl());
-        startActivity(in);
     }
 
     @Override

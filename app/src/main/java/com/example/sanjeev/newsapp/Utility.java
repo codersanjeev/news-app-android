@@ -36,7 +36,7 @@ public final class Utility {
     private Utility() {
     }
 
-    public static List<NewsItem> fetchNewsItems(String requestUrl) throws JSONException {
+    public static ArrayList<NewsItem> fetchNewsItems(String requestUrl) throws JSONException {
 
         URL url = createUrl(requestUrl);
 
@@ -112,9 +112,9 @@ public final class Utility {
     }
 
     // Extract list of news items from fetched String response
-    private static List<NewsItem> parseJSON(String response) throws JSONException {
+    private static ArrayList<NewsItem> parseJSON(String response) throws JSONException {
         String section, pubDate, title, url, author;
-        List<NewsItem> newsItems = new ArrayList<>();
+        ArrayList<NewsItem> newsItems = new ArrayList<>();
         JSONObject root = new JSONObject(response);
         JSONObject res = root.getJSONObject("response");
         JSONArray resultsArray = res.getJSONArray("results");
