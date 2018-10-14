@@ -10,7 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.example.sanjeev.newsapp.models.Results;
+import com.example.sanjeev.newsapp.models.Tags;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -19,9 +23,9 @@ import butterknife.ButterKnife;
 public class NewsItemAdapter extends RecyclerView.Adapter<NewsItemAdapter.NewsViewHolder> {
 
     private LayoutInflater mInflater;
-    private final ArrayList<NewsItem> mNewsItems;
+    private final List<Results> mNewsItems;
 
-    public NewsItemAdapter(Context context, ArrayList<NewsItem> newsItems){
+    public NewsItemAdapter(Context context, List<Results> newsItems){
         mInflater = LayoutInflater.from(context);
         this.mNewsItems = newsItems;
     }
@@ -35,11 +39,14 @@ public class NewsItemAdapter extends RecyclerView.Adapter<NewsItemAdapter.NewsVi
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewHolder newsViewHolder, int i) {
-        NewsItem currentItem = mNewsItems.get(i);
-        String title = currentItem.getmNewsTitle();
-        String category = currentItem.getmSection();
-        String author = currentItem.getmAuthorName();
-        String date = currentItem.getmDate();
+        Results currentItem = mNewsItems.get(i);
+
+        String title = currentItem.getWebTitle();
+        String category = currentItem.getSectionName();
+        List<Tags> tags = currentItem.getTags();
+        String author = tags.get(0).getWebTitle();
+        String date = currentItem.getWebPublicationDate();
+
         newsViewHolder.titleView.setText(title);
         newsViewHolder.sectionView.setText(category);
         newsViewHolder.authorNameView.setText(author);

@@ -24,6 +24,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.sanjeev.newsapp.models.NewsModel;
+import com.example.sanjeev.newsapp.models.Results;
+import com.example.sanjeev.newsapp.rest.ApiClient;
+import com.example.sanjeev.newsapp.rest.ApiInterface;
+
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -31,17 +36,19 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity{
 
-    private static ArrayList<NewsItem> newsItems = new ArrayList<>();
-    private NewsItemAdapter mAdapter;
-    private final String BASE_URL = "https://content.guardianapis.com/search?&show-tags=contributor&api-key=";
     private final String API_KEY = "dcd9ad5e-c852-4c47-bc8f-eab7f3411f07";
-    private final String ORDER_BY_ATTR = "&order-by=oldest";
-
+    Call<NewsModel> call;
+    ApiInterface apiInterface;
     @BindView(R.id.recycler_view)
-    RecyclerView mRecyclerView;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +56,9 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        apiInterface = ApiClient.getClient().create(ApiInterface.class);
         fetchSavedPreferences();
 
         if(!isConnected()){
@@ -62,22 +71,22 @@ public class MainActivity extends AppCompatActivity{
             dialog.show();
         }
         else{
+            call.enqueue(new Callback<NewsModel>() {
+                @Override
+                public void onResponse(Call<NewsModel> call, Response<NewsModel> response) {
+                    Log.v("Retrofit", "success");
+                    List<Results> results = response.body().getResponse().getResults();
+                    recyclerView.setAdapter(new NewsItemAdapter(MainActivity.this, results));
+                }
 
-            // will replace it soon with background thread
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+                @Override
+                public void onFailure(Call<NewsModel> call, Throwable t) {
+                    Log.v("Retrofit", "failed");
+                }
+            });
 
-            try {
-                newsItems = Utility.fetchNewsItems(Utility.getmURL());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
-
-        mAdapter = new NewsItemAdapter(this, newsItems);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
@@ -86,37 +95,35 @@ public class MainActivity extends AppCompatActivity{
         super.onResume();
     }
 
-    // get saved preference and build the string url accordingly.
     private void fetchSavedPreferences() {
-        String url;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         if(preferences.getString(getString(R.string.key), getString(R.string.default_order_value)).equals(getString(R.string.default_order_value))){
-            url = BASE_URL + API_KEY;
+            call = apiInterface.getAllNews(API_KEY, "newest");
         }
         else{
-            url = BASE_URL + API_KEY + ORDER_BY_ATTR;
+            call = apiInterface.getAllNews(API_KEY, "oldest");
         }
-        Log.v("switch_value", preferences.getString("category_list", ""));
         switch(preferences.getString("category_list", "")){
             case "All" :
-                Utility.setmURL(url);
+                call = apiInterface.getAllNews(API_KEY, "newest");
                 break;
             case "Politics" :
-                Utility.setmURL(url + "&q=politics");
+                call = apiInterface.getCategorizedNews(API_KEY, "newest", "politics");
                 break;
             case "Sports" :
-                Utility.setmURL(url + "&q=sports");
+                call = apiInterface.getCategorizedNews(API_KEY, "newest", "sports");
                 break;
             case "Finance" :
-                Utility.setmURL(url + "&q=finance");
+                call = apiInterface.getCategorizedNews(API_KEY, "newest", "finance");
                 break;
             case "Education" :
-                Utility.setmURL(url + "&q=education");
+                call = apiInterface.getCategorizedNews(API_KEY, "newest", "education");
                 break;
             case "Economics" :
-                Utility.setmURL(url + "&q=economics");
+                call = apiInterface.getCategorizedNews(API_KEY, "newest", "economics");
+                break;
             default:
-                Utility.setmURL(url);
+                call = apiInterface.getAllNews(API_KEY, "newest");
         }
     }
 
