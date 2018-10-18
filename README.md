@@ -5,7 +5,7 @@
 ## Installation
 Clone this repository and import into **Android Studio**
 ```bash
-git clone git@github.com:thedevelopersanjeev/NewsApp.git
+git clone github.com/thedevelopersanjeev/NewsApp.git
 ```
 
 ## Maintainers
