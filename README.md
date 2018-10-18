@@ -1,6 +1,6 @@
 # NewsApp Application
 
-
+![](record.gif)
 
 ## Installation
 Clone this repository and import into **Android Studio**
