@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="card_height">200dp</dimen>
-    <dimen name="card_elevation">4dp</dimen>
-    <dimen name="margin8">8dp</dimen>
-    <dimen name="textview_height">150dp</dimen>
-    <dimen name="bottontext_height">50dp</dimen>
-    <dimen name="divider_height">0dp</dimen>
-</resources>
