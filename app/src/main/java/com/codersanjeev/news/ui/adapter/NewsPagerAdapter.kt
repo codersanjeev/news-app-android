@@ -1,21 +1,18 @@
 package com.codersanjeev.news.ui.adapter
 
-import android.graphics.Color
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.codersanjeev.news.ui.newslist.NewsListFragment
+import com.codersanjeev.news.utils.Utility
 
 class NewsPagerAdapter(fragmentActivity: FragmentActivity) :
     FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int {
-        return 5
+        return Utility().getTabTitles().size
     }
 
-    override fun createFragment(position: Int): Fragment {
-        val fm = Fragment()
-        val colors = listOf(Color.RED, Color.GREEN, Color.BLUE)
-        fm.view?.setBackgroundColor(colors[position % 3])
-        return fm
+    override fun createFragment(position: Int): NewsListFragment {
+        return NewsListFragment.newInstance(Utility().getTabTitles()[position])
     }
 }
