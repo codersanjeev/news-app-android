@@ -6,11 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.codersanjeev.news.R
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.codersanjeev.api.models.Article
+import com.codersanjeev.news.databinding.NewsListFragmentBinding
 
 class NewsListFragment : Fragment() {
 
     private var category: String? = null
+    private var _binding: NewsListFragmentBinding? = null
+    private lateinit var viewModel: NewsListViewModel
+    private lateinit var newsAdapter: NewsListAdapter
 
     companion object {
         fun newInstance(category: String): NewsListFragment {
@@ -20,17 +26,34 @@ class NewsListFragment : Fragment() {
         }
     }
 
-    private lateinit var viewModel: NewsListViewModel
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.news_list_fragment, container, false)
+        viewModel = ViewModelProvider(this).get(NewsListViewModel::class.java)
+        newsAdapter = NewsListAdapter { openNews(it) }
+        _binding = NewsListFragmentBinding.inflate(inflater, container, false)
+        _binding?.newsListRecyclerView?.layoutManager = LinearLayoutManager(context)
+        _binding?.newsListRecyclerView?.adapter = newsAdapter
+        _binding?.newsListRecyclerView?.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        return _binding?.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(NewsListViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.fetchNews(category ?: "")
+        viewModel.newsList.observe({ lifecycle }) {
+            newsAdapter.submitList(it)
+        }
+    }
+
+    private fun openNews(news: Article) {
+        // TODO: open news details activity
+
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }

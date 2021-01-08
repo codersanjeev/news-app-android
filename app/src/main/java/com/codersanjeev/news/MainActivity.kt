@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(_binding.root)
+        _binding.newsAppToolbar.title = getString(R.string.app_name)
         setupTabs()
     }
 
