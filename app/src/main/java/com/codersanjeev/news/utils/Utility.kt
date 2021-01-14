@@ -1,5 +1,7 @@
 package com.codersanjeev.news.utils
 
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
 class Utility {
@@ -9,14 +11,19 @@ class Utility {
         listOf("business", "entertainment", "general", "health", "science", "sports", "technology")
 }
 
-// 2021-01-08T12:56:12Z
-fun String.toDate(): Date {
-    // TODO: fix this soon
-    return Date()
+fun String.toDate(): Date? {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+    var date: Date? = null
+    try {
+        date = dateFormat.parse(this)
+    } catch (exception: ParseException) {
+        exception.printStackTrace()
+    }
+    return date
 }
 
 // November 6, 2014 2:45 PM
 fun Date.toFormattedString(): String {
-    // TODO: fix this soon
-    return ""
+    val dateFormat = SimpleDateFormat("MMMM dd, yyyy hh.mm aa", Locale.getDefault())
+    return dateFormat.format(this)
 }
