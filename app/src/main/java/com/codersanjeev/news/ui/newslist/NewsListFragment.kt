@@ -1,16 +1,17 @@
 package com.codersanjeev.news.ui.newslist
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codersanjeev.api.models.Article
 import com.codersanjeev.news.databinding.NewsListFragmentBinding
+import com.codersanjeev.news.ui.newsdetails.NewsDetailsActivity
 
 class NewsListFragment : Fragment() {
 
@@ -36,7 +37,12 @@ class NewsListFragment : Fragment() {
         _binding = NewsListFragmentBinding.inflate(inflater, container, false)
         _binding?.newsListRecyclerView?.layoutManager = LinearLayoutManager(context)
         _binding?.newsListRecyclerView?.adapter = newsAdapter
-        _binding?.newsListRecyclerView?.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        _binding?.newsListRecyclerView?.addItemDecoration(
+            DividerItemDecoration(
+                this.context,
+                DividerItemDecoration.VERTICAL
+            )
+        )
         return _binding?.root
     }
 
@@ -49,7 +55,8 @@ class NewsListFragment : Fragment() {
     }
 
     private fun openNews(news: Article) {
-        Toast.makeText(context, news.title ?: "", Toast.LENGTH_SHORT).show()
+        val intent = Intent(context, NewsDetailsActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onDestroyView() {
