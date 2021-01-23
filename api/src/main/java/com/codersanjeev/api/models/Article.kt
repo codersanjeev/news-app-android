@@ -1,8 +1,8 @@
 package com.codersanjeev.api.models
 
-
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.io.Serializable
 
 @JsonClass(generateAdapter = true)
 data class Article(
@@ -22,4 +22,4 @@ data class Article(
     val url: String?,
     @Json(name = "urlToImage")
     val urlToImage: String?
-)
+) : Serializable

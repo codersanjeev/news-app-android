@@ -56,6 +56,7 @@ class NewsListFragment : Fragment() {
 
     private fun openNews(news: Article) {
         val intent = Intent(context, NewsDetailsActivity::class.java)
+        intent.putExtra("NEWS_DETAILS", news)
         startActivity(intent)
     }
 
